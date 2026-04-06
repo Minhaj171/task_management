@@ -416,7 +416,17 @@ function pcc(p){return PROJ_P[p]||'p-Unassigned';}
 function dc(d){return 'dv-'+(d||'Unassigned');}
 function now(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 function hl(t,q){if(!q)return t;return t.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');}
-function filtered(){return tasks.filter(t=>{if(activeDev&&t.developer!==activeDev)return false;if(activeYear&&t.year!==activeYear)return false;return true;});}
+function filtered(){
+  return tasks
+    .filter(t=>{if(activeDev&&t.developer!==activeDev)return false;if(activeYear&&t.year!==activeYear)return false;return true;})
+    .sort((a,b)=>{
+      if(!a.assignDate&&!b.assignDate)return b.id-a.id;
+      if(!a.assignDate)return 1;
+      if(!b.assignDate)return -1;
+      if(b.assignDate!==a.assignDate)return b.assignDate>a.assignDate?1:-1;
+      return b.id-a.id;
+    });
+}
 function setDevFilter(dev,btn){
   activeDev=dev;
   document.querySelectorAll('.dfb').forEach(b=>{b.classList.remove('active');b.style.background='';b.style.color='';});
